@@ -16,7 +16,9 @@ import {
     tables,
     revenue7d,
     topItems,
-} from "@/lib/mockData.ts";
+    Order,
+    RestaurantTable,
+} from "@/lib/mockData";
 
 import {
     LineChart,
@@ -30,27 +32,25 @@ import {
     Bar,
 } from "recharts";
 
-type Order = (typeof orders)[number];
-
 export default function Dashboard() {
     const active = orders.filter(
-        (o) => o.status === "pending" || o.status === "preparing"
+        (o: Order) => o.status === "pending" || o.status === "preparing"
     ).length;
 
-    const occupied = tables.filter((t) => t.status === "occupied").length;
+    const occupied = tables.filter((t: RestaurantTable) => t.status === "occupied").length;
     const todayRevenue = revenue7d[revenue7d.length - 1].revenue;
 
     // ✅ Table columns (using your reusable table)
     const columns: Column<Order>[] = [
         {
             header: "Order",
-            accessor: (row) => (
+            accessor: (row: Order) => (
                 <span className="font-mono text-xs">{row.id}</span>
             ),
         },
         {
             header: "Table",
-            accessor: (row) => `T-${row.table}`,
+            accessor: (row: Order) => `T-${row.table}`,
         },
         {
             header: "Server",
@@ -58,19 +58,19 @@ export default function Dashboard() {
         },
         {
             header: "Items",
-            accessor: (row) => (
+            accessor: (row: Order) => (
                 <span className="text-muted-foreground">
-          {row.items.reduce((s, i) => s + i.qty, 0)} items
+          {row.items.reduce((s: number, i) => s + i.qty, 0)} items
         </span>
             ),
         },
         {
             header: "Status",
-            accessor: (row) => <StatusBadge status={row.status} />,
+            accessor: (row: Order) => <StatusBadge status={row.status} />,
         },
         {
             header: "Total",
-            accessor: (row) => (
+            accessor: (row: Order) => (
                 <div className="text-right font-medium">
                     ${row.total.toFixed(2)}
                 </div>

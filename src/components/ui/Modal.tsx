@@ -1,74 +1,88 @@
-// src/components/Modal.tsx
-import React, { type ReactNode } from "react"
+import React, { type ReactNode } from "react";
 
 type ModalProps = {
-  open: boolean
-  title?: ReactNode
-  children: ReactNode
-  onClose: () => void
-  footer?: ReactNode
-  className?: string
-  disableBackdropClick?: boolean
-  size?: "small" | "medium" | "large" | "full"
-  showCloseButton?: boolean
-}
+    open: boolean;
+    title?: ReactNode;
+    children: ReactNode;
+    onClose: () => void;
+    footer?: ReactNode;
+    className?: string;
+    disableBackdropClick?: boolean;
+    size?: "small" | "medium" | "large" | "full";
+    showCloseButton?: boolean;
+};
 
 const sizeClasses: Record<string, string> = {
-  small: "max-w-md",       // ~28rem width
-  medium: "max-w-xl",      // ~36rem width (default)
-  large: "max-w-4xl  max-h-[90vh]",      // ~56rem width
-  full: "w-full max-w-full max-h-full", // full width/height modal (use carefully)
-}
+    small: "max-w-md",
+    medium: "max-w-xl",
+    large: "max-w-4xl max-h-[90vh]",
+    full: "w-full max-w-full max-h-full",
+};
 
 const Modal: React.FC<ModalProps> = ({
-                                       open,
-                                       title,
-                                       children,
-                                       onClose,
-                                       footer,
-                                       className = "",
-                                       disableBackdropClick = false,
-                                       size = "medium",
-                                       showCloseButton = true,
+                                         open,
+                                         title,
+                                         children,
+                                         onClose,
+                                         footer,
+                                         className = "",
+                                         disableBackdropClick = false,
+                                         size = "medium",
+                                         showCloseButton = true,
                                      }) => {
-  if (!open) return null
+    if (!open) return null;
 
-  const handleBackdropClick = () => {
-    if (!disableBackdropClick) onClose()
-  }
+    const handleBackdropClick = () => {
+        if (!disableBackdropClick) onClose();
+    };
 
-  const modalSizeClass = sizeClasses[size] || sizeClasses.medium
+    const modalSizeClass = sizeClasses[size] || sizeClasses.medium;
 
-  return (
-      <div
-          className="fixed inset-0 flex items-center justify-center z-50 "
-          style={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
-          onClick={handleBackdropClick}
-          aria-modal="true"
-          role="dialog"
-      >
+    return (
         <div
-            className={`bg-white rounded-lg p-6 w-full shadow-lg relative ${size === "large" ? " overflow-y-auto" : "overscroll-y-none"} ${modalSizeClass} ${className}`}
-            onClick={(e) => e.stopPropagation()} // prevent closing when clicking inside modal
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
+            onClick={handleBackdropClick}
+            aria-modal="true"
+            role="dialog"
         >
-          {showCloseButton && (
-              <button
-                  onClick={onClose}
-                  className="absolute top -3 right-3 text-gray-500 hover:text-gray-700"
-                  aria-label="Close modal"
-              >
-                ✕
-              </button>
-          )}
+            <div
+                onClick={(e) => e.stopPropagation()}
+                className={`
+          relative w-full rounded-2xl border border-border
+          bg-background text-foreground shadow-2xl
+          ${modalSizeClass}
+          ${size === "large" ? "overflow-y-auto" : ""}
+          ${className}
+        `}
+            >
+                {showCloseButton && (
+                    <button
+                        onClick={onClose}
+                        className="absolute right-4 top-4 text-muted-foreground hover:text-foreground transition"
+                        aria-label="Close modal"
+                    >
+                        ✕
+                    </button>
+                )}
 
-          {title && <div className="mb-4 text-xl font-bold">{title}</div>}
+                <div className="p-6">
+                    {title && (
+                        <div className="mb-6 text-2xl font-semibold tracking-tight">
+                            {title}
+                        </div>
+                    )}
 
-          <div>{children}</div>
+                    {children}
 
-          {footer && <div className="mt-6 flex justify-end space-x-2">{footer}</div>}
+                    {footer && (
+                        <div className="mt-6 flex justify-end gap-2">
+                            {footer}
+                        </div>
+                    )}
+                </div>
+            </div>
         </div>
-      </div>
-  )
-}
+    );
+};
 
-export default Modal
+export default Modal;
